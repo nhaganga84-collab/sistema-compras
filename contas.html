@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Contas a Pagar{% endblock %}
+{% block page_title %}<i class="bi bi-credit-card me-2"></i>Contas a Pagar{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('nova_conta') }}" class="btn btn-accent"><i class="bi bi-plus-lg me-1"></i>Nova Conta</a>
+</div>
+<div class="table-card">
+  <div class="card-header">Contas Registadas</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>Fornecedor</th><th>Compra</th><th>Valor</th><th>Vencimento</th><th>Estado</th><th>Descrição</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for c in lista %}
+        <tr class="{{ 'table-danger' if c.estado == 'Atrasado' else '' }}">
+          <td>{{ c.fornecedor.nome if c.fornecedor else '—' }}</td>
+          <td>{{ c.compra.numero if c.compra else '—' }}</td>
+          <td><strong>MT {{ '{:,.2f}'.format(c.valor) }}</strong></td>
+          <td>{{ c.vencimento.strftime('%d/%m/%Y') if c.vencimento else '—' }}</td>
+          <td><span class="badge badge-{{ c.estado.lower() }} px-2 py-1">{{ c.estado }}</span></td>
+          <td style="font-size:0.85rem">{{ c.descricao or '—' }}</td>
+          <td>
+            {% if c.estado != 'Pago' %}
+            <form method="post" action="{{ url_for('pagar_conta', id=c.id) }}" class="d-inline" onsubmit="return confirm('Confirmar pagamento?')">
+              <button class="btn btn-sm btn-success"><i class="bi bi-check-lg me-1"></i>Pagar</button>
+            </form>
+            {% else %}
+            <span class="text-success"><i class="bi bi-check-circle"></i></span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-4">Nenhuma conta registada.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

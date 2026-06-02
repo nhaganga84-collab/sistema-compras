@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Pedidos de Compra{% endblock %}
+{% block page_title %}<i class="bi bi-clipboard-plus me-2"></i>Pedidos de Compra{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('novo_pedido') }}" class="btn btn-accent"><i class="bi bi-plus-lg me-1"></i>Novo Pedido</a>
+</div>
+<div class="table-card">
+  <div class="card-header">Lista de Pedidos</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>Número</th><th>Fornecedor</th><th>Data</th><th>Total</th><th>Estado</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for p in lista %}
+        <tr>
+          <td><strong>{{ p.numero }}</strong></td>
+          <td>{{ p.fornecedor.nome if p.fornecedor else '—' }}</td>
+          <td>{{ p.data_pedido.strftime('%d/%m/%Y') }}</td>
+          <td>MT {{ '{:,.2f}'.format(p.total) }}</td>
+          <td><span class="badge badge-{{ p.estado.lower() }} px-2 py-1">{{ p.estado }}</span></td>
+          <td class="d-flex gap-1">
+            <a href="{{ url_for('ver_pedido', id=p.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+            {% if p.estado == 'Pendente' %}
+            <form method="post" action="{{ url_for('alterar_estado_pedido', id=p.id) }}" class="d-inline">
+              <input type="hidden" name="estado" value="Aprovado">
+              <button class="btn btn-sm btn-outline-success" title="Aprovar"><i class="bi bi-check-lg"></i></button>
+            </form>
+            <form method="post" action="{{ url_for('alterar_estado_pedido', id=p.id) }}" class="d-inline">
+              <input type="hidden" name="estado" value="Cancelado">
+              <button class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+            </form>
+            {% endif %}
+            {% if p.estado == 'Aprovado' %}
+            <form method="post" action="{{ url_for('alterar_estado_pedido', id=p.id) }}" class="d-inline">
+              <input type="hidden" name="estado" value="Recebido">
+              <button class="btn btn-sm btn-success" title="Marcar Recebido"><i class="bi bi-truck"></i></button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">Nenhum pedido registado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

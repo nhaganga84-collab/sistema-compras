@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}CompraSystem{% endblock %} | Sistema de Compras</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+<style>
+:root {
+  --sidebar-w: 260px;
+  --primary: #1e3a5f;
+  --primary-light: #2a4f80;
+  --accent: #f0a500;
+  --danger: #dc3545;
+  --success: #198754;
+}
+body { background: #f4f6fb; font-family: 'Segoe UI', sans-serif; }
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed; top: 0; left: 0; height: 100vh;
+  width: var(--sidebar-w); background: var(--primary);
+  display: flex; flex-direction: column; z-index: 1000;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.15);
+}
+.sidebar-brand {
+  padding: 1.5rem 1.2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-brand h5 { color: white; margin: 0; font-weight: 700; font-size: 1.1rem; }
+.sidebar-brand small { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
+.sidebar-brand .logo-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--accent); display: flex; align-items: center;
+  justify-content: center; margin-bottom: 0.5rem;
+}
+.sidebar-brand .logo-icon i { color: var(--primary); font-size: 1.3rem; }
+
+.sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+.nav-section { padding: 0.5rem 1.2rem 0.3rem; color: rgba(255,255,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+.sidebar-nav .nav-link {
+  color: rgba(255,255,255,0.75); padding: 0.65rem 1.2rem;
+  display: flex; align-items: center; gap: 0.75rem;
+  border-radius: 0; transition: all 0.2s; font-size: 0.9rem;
+}
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+  background: rgba(255,255,255,0.12); color: white;
+  border-left: 3px solid var(--accent);
+}
+.sidebar-nav .nav-link i { font-size: 1rem; width: 20px; text-align: center; }
+
+.sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,0.1); }
+.sidebar-footer small { color: rgba(255,255,255,0.4); font-size: 0.72rem; }
+
+/* MAIN */
+.main-content { margin-left: var(--sidebar-w); min-height: 100vh; }
+.topbar {
+  background: white; border-bottom: 1px solid #e5e9f0;
+  padding: 0.9rem 1.8rem; display: flex; align-items: center;
+  justify-content: space-between; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.topbar-title { font-weight: 700; color: var(--primary); font-size: 1.15rem; }
+.content-area { padding: 1.8rem; }
+
+/* CARDS */
+.stat-card {
+  background: white; border-radius: 14px; padding: 1.4rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #eef0f5;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+.stat-card .stat-icon {
+  width: 52px; height: 52px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+.stat-card .stat-value { font-size: 1.9rem; font-weight: 700; color: var(--primary); }
+.stat-card .stat-label { color: #6c757d; font-size: 0.82rem; margin-top: 0.2rem; }
+
+/* TABLE */
+.table-card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid #eef0f5; overflow: hidden; }
+.table-card .card-header { background: var(--primary); color: white; padding: 1rem 1.4rem; font-weight: 600; }
+.table thead th { background: #f8f9fc; color: var(--primary); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #eef0f5; }
+.table tbody tr:hover { background: #f8faff; }
+
+/* BADGES */
+.badge-ativo { background: #d4edda; color: #155724; }
+.badge-inativo { background: #f8d7da; color: #721c24; }
+.badge-pendente { background: #fff3cd; color: #856404; }
+.badge-aprovado { background: #cce5ff; color: #004085; }
+.badge-recebido { background: #d4edda; color: #155724; }
+.badge-cancelado { background: #f8d7da; color: #721c24; }
+.badge-pago { background: #d4edda; color: #155724; }
+.badge-atrasado { background: #f8d7da; color: #721c24; }
+
+/* FORM */
+.form-card { background: white; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 2rem; }
+.form-label { font-weight: 500; color: #374151; font-size: 0.88rem; }
+.form-control, .form-select { border-radius: 8px; border-color: #dde3ee; font-size: 0.9rem; }
+.form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,58,95,0.1); }
+
+/* BUTTONS */
+.btn-primary-custom { background: var(--primary); border-color: var(--primary); color: white; border-radius: 8px; font-weight: 500; }
+.btn-primary-custom:hover { background: var(--primary-light); border-color: var(--primary-light); color: white; }
+.btn-accent { background: var(--accent); border-color: var(--accent); color: var(--primary); border-radius: 8px; font-weight: 600; }
+.btn-accent:hover { background: #d48f00; border-color: #d48f00; color: var(--primary); }
+
+/* ALERTS */
+.alert { border-radius: 10px; border: none; }
+
+/* ITEM ROW */
+.item-row { background: #f8faff; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; border: 1px solid #e8edf5; }
+
+@media (max-width: 768px) {
+  .sidebar { width: 100%; height: auto; position: relative; }
+  .main-content { margin-left: 0; }
+}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-icon"><i class="bi bi-cart-check"></i></div>
+    <h5>CompraSystem</h5>
+    <small>Sistema de Compras MZ</small>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+      <i class="bi bi-grid-1x2"></i> Dashboard
+    </a>
+
+    <div class="nav-section">Cadastros</div>
+    <a href="{{ url_for('fornecedores') }}" class="nav-link {% if 'fornecedor' in request.endpoint %}active{% endif %}">
+      <i class="bi bi-building"></i> Fornecedores
+    </a>
+    <a href="{{ url_for('produtos') }}" class="nav-link {% if 'produto' in request.endpoint %}active{% endif %}">
+      <i class="bi bi-box-seam"></i> Produtos
+    </a>
+
+    <div class="nav-section">Compras</div>
+    <a href="{{ url_for('pedidos') }}" class="nav-link {% if 'pedido' in request.endpoint %}active{% endif %}">
+      <i class="bi bi-clipboard-plus"></i> Pedidos de Compra
+    </a>
+    <a href="{{ url_for('compras') }}" class="nav-link {% if 'compra' in request.endpoint and 'pedido' not in request.endpoint %}active{% endif %}">
+      <i class="bi bi-bag-check"></i> Registo de Compras
+    </a>
+
+    <div class="nav-section">Financeiro</div>
+    <a href="{{ url_for('contas') }}" class="nav-link {% if 'conta' in request.endpoint %}active{% endif %}">
+      <i class="bi bi-credit-card"></i> Contas a Pagar
+    </a>
+
+    <div class="nav-section">Análise</div>
+    <a href="{{ url_for('relatorios') }}" class="nav-link {% if 'relatorio' in request.endpoint or 'rel_' in request.endpoint %}active{% endif %}">
+      <i class="bi bi-bar-chart-line"></i> Relatórios
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <small><i class="bi bi-geo-alt"></i> Maputo, Moçambique</small><br>
+    <small>v1.0.0 &copy; 2025</small>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="topbar">
+    <span class="topbar-title">{% block page_title %}Dashboard{% endblock %}</span>
+    <div class="d-flex align-items-center gap-3">
+      <span class="text-muted" style="font-size:0.85rem"><i class="bi bi-calendar3"></i> {{ now.strftime('%d/%m/%Y') }}</span>
+    </div>
+  </div>
+
+  <div class="content-area">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else ('info' if category == 'info' else 'warning') }} alert-dismissible fade show" role="alert">
+            <i class="bi bi-{{ 'check-circle' if category == 'success' else 'info-circle' }}"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

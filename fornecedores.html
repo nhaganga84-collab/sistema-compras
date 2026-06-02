@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Fornecedores{% endblock %}
+{% block page_title %}<i class="bi bi-building me-2"></i>Fornecedores{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <form class="d-flex gap-2" method="get">
+    <input type="search" name="q" value="{{ q }}" placeholder="Pesquisar por nome ou NUIT..." class="form-control" style="width:280px">
+    <button class="btn btn-primary-custom"><i class="bi bi-search"></i></button>
+  </form>
+  <a href="{{ url_for('novo_fornecedor') }}" class="btn btn-accent"><i class="bi bi-plus-lg me-1"></i>Novo Fornecedor</a>
+</div>
+
+<div class="table-card">
+  <div class="card-header">Fornecedores Cadastrados ({{ lista|length }})</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>#</th><th>Empresa</th><th>NUIT</th><th>Contacto</th><th>Telefone</th><th>Email</th><th>Estado</th><th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in lista %}
+        <tr>
+          <td class="text-muted" style="font-size:0.8rem">{{ f.id }}</td>
+          <td><strong>{{ f.nome }}</strong><br><small class="text-muted">{{ f.contacto }}</small></td>
+          <td>{{ f.nuit or '—' }}</td>
+          <td>{{ f.contacto or '—' }}</td>
+          <td>{{ f.telefone or '—' }}</td>
+          <td>{{ f.email or '—' }}</td>
+          <td><span class="badge badge-{{ f.estado.lower() }} px-2 py-1">{{ f.estado }}</span></td>
+          <td>
+            <a href="{{ url_for('editar_fornecedor', id=f.id) }}" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i></a>
+            <form method="post" action="{{ url_for('remover_fornecedor', id=f.id) }}" class="d-inline" onsubmit="return confirm('Desativar este fornecedor?')">
+              <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-4">Nenhum fornecedor encontrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

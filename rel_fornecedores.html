@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Relatório de Fornecedores{% endblock %}
+{% block page_title %}<i class="bi bi-building me-2"></i>Relatório de Fornecedores{% endblock %}
+{% block content %}
+<div class="table-card">
+  <div class="card-header">Desempenho por Fornecedor</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Fornecedor</th><th>Nº Compras</th><th>Total Gasto</th><th>Última Compra</th></tr></thead>
+      <tbody>
+        {% for d in dados %}
+        <tr>
+          <td><strong>{{ d.fornecedor.nome }}</strong><br><small class="text-muted">{{ d.fornecedor.contacto }}</small></td>
+          <td>{{ d.num_compras }}</td>
+          <td><strong>MT {{ '{:,.2f}'.format(d.total) }}</strong></td>
+          <td>{{ d.ultima.strftime('%d/%m/%Y') if d.ultima else '—' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="text-center text-muted py-4">Sem dados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

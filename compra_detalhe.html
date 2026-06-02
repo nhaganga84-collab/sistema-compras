@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Compra {{ compra.numero }}{% endblock %}
+{% block page_title %}<i class="bi bi-bag-check me-2"></i>Compra {{ compra.numero }}{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-lg-8">
+<div class="form-card">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h5 class="fw-bold mb-0" style="color:var(--primary)">{{ compra.numero }}</h5>
+      <small class="text-muted">{{ compra.data_compra.strftime('%d/%m/%Y %H:%M') }}</small>
+    </div>
+    <span class="badge badge-{{ compra.estado_pagamento.lower() }} px-3 py-2 fs-6">{{ compra.estado_pagamento }}</span>
+  </div>
+  <div class="row g-2 mb-3">
+    <div class="col-6"><strong>Fornecedor:</strong><br>{{ compra.fornecedor.nome if compra.fornecedor else '—' }}</div>
+    <div class="col-6"><strong>Pagamento:</strong><br>{{ compra.metodo_pagamento or '—' }}</div>
+  </div>
+  {% if compra.observacoes %}<p><strong>Obs:</strong> {{ compra.observacoes }}</p>{% endif %}
+  <hr>
+  <table class="table">
+    <thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Subtotal</th></tr></thead>
+    <tbody>
+      {% for item in compra.itens %}
+      <tr>
+        <td>{{ item.produto.nome if item.produto else '—' }}</td>
+        <td>{{ item.quantidade }}</td>
+        <td>MT {{ '{:,.2f}'.format(item.preco_unitario) }}</td>
+        <td>MT {{ '{:,.2f}'.format(item.subtotal) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot><tr class="fw-bold bg-light"><td colspan="3">TOTAL</td><td>MT {{ '{:,.2f}'.format(compra.total) }}</td></tr></tfoot>
+  </table>
+  <div class="alert alert-success mt-2 py-2"><i class="bi bi-check-circle me-2"></i>Stock atualizado automaticamente após registo desta compra.</div>
+  <a href="{{ url_for('compras') }}" class="btn btn-outline-secondary mt-2"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
+</div>
+</div>
+</div>
+{% endblock %}

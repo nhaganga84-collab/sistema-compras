@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Relatório Financeiro{% endblock %}
+{% block page_title %}<i class="bi bi-graph-up me-2"></i>Relatório Financeiro{% endblock %}
+{% block extra_head %}<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <form method="get" class="d-flex gap-2 align-items-center">
+    <label class="form-label mb-0">Ano:</label>
+    <select name="ano" class="form-select" style="width:100px" onchange="this.form.submit()">
+      {% for a in range(2023, now.year+1) %}
+      <option value="{{ a }}" {{ 'selected' if a == ano }}>{{ a }}</option>
+      {% endfor %}
+    </select>
+  </form>
+  <a href="{{ url_for('exportar_financeiro_pdf') }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-earmark-pdf me-1"></i>Exportar PDF</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="form-card">
+      <canvas id="grafico" height="120"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="table-card">
+      <div class="card-header">Gasto por Mês — {{ ano }}</div>
+      <table class="table mb-0">
+        <tbody>
+          {% for m in meses %}
+          <tr>
+            <td>{{ m.nome }}</td>
+            <td class="text-end"><strong>MT {{ '{:,.2f}'.format(m.total) }}</strong></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot><tr class="fw-bold bg-light"><td>TOTAL {{ ano }}</td><td class="text-end">MT {{ '{:,.2f}'.format(total_ano) }}</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const meses = {{ meses | tojson }};
+new Chart(document.getElementById('grafico'), {
+  type: 'line',
+  data: {
+    labels: meses.map(m => m.nome),
+    datasets: [{
+      label: 'Total Gasto (MT)',
+      data: meses.map(m => m.total),
+      borderColor: '#1e3a5f',
+      backgroundColor: 'rgba(30,58,95,0.08)',
+      fill: true,
+      tension: 0.3,
+      pointBackgroundColor: '#f0a500',
+      pointRadius: 5
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { callback: v => 'MT ' + v.toLocaleString() } } }
+  }
+});
+</script>
+{% endblock %}

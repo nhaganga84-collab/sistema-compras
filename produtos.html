@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Produtos{% endblock %}
+{% block page_title %}<i class="bi bi-box-seam me-2"></i>Produtos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <form class="d-flex gap-2" method="get">
+    <input type="search" name="q" value="{{ q }}" placeholder="Pesquisar produto..." class="form-control" style="width:280px">
+    <button class="btn btn-primary-custom"><i class="bi bi-search"></i></button>
+  </form>
+  <a href="{{ url_for('novo_produto') }}" class="btn btn-accent"><i class="bi bi-plus-lg me-1"></i>Novo Produto</a>
+</div>
+
+<div class="table-card">
+  <div class="card-header">Produtos Cadastrados ({{ lista|length }})</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>Código</th><th>Nome</th><th>Categoria</th><th>Preço Compra</th><th>Preço Venda</th><th>Stock</th><th>Stock Mín.</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for p in lista %}
+        <tr class="{{ 'table-danger' if p.stock <= p.stock_minimo else '' }}">
+          <td><code>{{ p.codigo }}</code></td>
+          <td><strong>{{ p.nome }}</strong></td>
+          <td><span class="badge bg-light text-dark">{{ p.categoria or '—' }}</span></td>
+          <td>MT {{ '{:,.2f}'.format(p.preco_compra) }}</td>
+          <td>MT {{ '{:,.2f}'.format(p.preco_venda) }}</td>
+          <td>
+            {% if p.stock <= p.stock_minimo %}
+              <span class="badge bg-danger">{{ p.stock }}</span>
+            {% else %}
+              <span class="badge bg-success">{{ p.stock }}</span>
+            {% endif %}
+          </td>
+          <td>{{ p.stock_minimo }}</td>
+          <td>
+            <a href="{{ url_for('editar_produto', id=p.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-4">Nenhum produto encontrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

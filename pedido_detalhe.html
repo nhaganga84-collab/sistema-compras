@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Pedido {{ pedido.numero }}{% endblock %}
+{% block page_title %}<i class="bi bi-clipboard me-2"></i>Pedido {{ pedido.numero }}{% endblock %}
+{% block content %}
+<div class="row">
+<div class="col-lg-8">
+<div class="form-card">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h5 class="mb-0 fw-bold" style="color:var(--primary)">{{ pedido.numero }}</h5>
+      <small class="text-muted">{{ pedido.data_pedido.strftime('%d/%m/%Y %H:%M') }}</small>
+    </div>
+    <span class="badge badge-{{ pedido.estado.lower() }} px-3 py-2 fs-6">{{ pedido.estado }}</span>
+  </div>
+  <p><strong>Fornecedor:</strong> {{ pedido.fornecedor.nome if pedido.fornecedor else '—' }}</p>
+  {% if pedido.observacoes %}
+  <p><strong>Obs:</strong> {{ pedido.observacoes }}</p>
+  {% endif %}
+  <hr>
+  <table class="table">
+    <thead><tr><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Subtotal</th></tr></thead>
+    <tbody>
+      {% for item in pedido.itens %}
+      <tr>
+        <td>{{ item.produto.nome if item.produto else '—' }}</td>
+        <td>{{ item.quantidade }}</td>
+        <td>MT {{ '{:,.2f}'.format(item.preco_unitario) }}</td>
+        <td>MT {{ '{:,.2f}'.format(item.subtotal) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr class="fw-bold"><td colspan="3">TOTAL</td><td>MT {{ '{:,.2f}'.format(pedido.total) }}</td></tr>
+    </tfoot>
+  </table>
+  <a href="{{ url_for('pedidos') }}" class="btn btn-outline-secondary mt-2"><i class="bi bi-arrow-left me-1"></i>Voltar</a>
+</div>
+</div>
+</div>
+{% endblock %}

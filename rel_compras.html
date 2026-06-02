@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Relatório de Compras{% endblock %}
+{% block page_title %}<i class="bi bi-bag-check me-2"></i>Relatório de Compras{% endblock %}
+{% block content %}
+<div class="form-card mb-3">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">De</label>
+      <input type="date" name="from" class="form-control" value="{{ from_date or '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Até</label>
+      <input type="date" name="to" class="form-control" value="{{ to_date or '' }}">
+    </div>
+    <div class="col-md-4">
+      <button class="btn btn-primary-custom w-100"><i class="bi bi-filter me-1"></i>Filtrar</button>
+    </div>
+  </form>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mb-2">
+  <a href="{{ url_for('exportar_compras_pdf') }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-file-earmark-pdf me-1"></i>PDF</a>
+  <a href="{{ url_for('exportar_compras_excel') }}" class="btn btn-sm btn-outline-success"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
+</div>
+
+<div class="table-card">
+  <div class="card-header">Compras ({{ lista|length }} resultados)</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead><tr><th>Número</th><th>Fornecedor</th><th>Data</th><th>Total</th><th>Pagamento</th><th>Estado</th></tr></thead>
+      <tbody>
+        {% for c in lista %}
+        <tr>
+          <td>{{ c.numero }}</td>
+          <td>{{ c.fornecedor.nome if c.fornecedor else '—' }}</td>
+          <td>{{ c.data_compra.strftime('%d/%m/%Y') }}</td>
+          <td>MT {{ '{:,.2f}'.format(c.total) }}</td>
+          <td>{{ c.metodo_pagamento or '—' }}</td>
+          <td><span class="badge badge-{{ c.estado_pagamento.lower() }}">{{ c.estado_pagamento }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot><tr class="fw-bold bg-light"><td colspan="3">TOTAL GERAL</td><td colspan="3">MT {{ '{:,.2f}'.format(total) }}</td></tr></tfoot>
+    </table>
+  </div>
+</div>
+{% endblock %}

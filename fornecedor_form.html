@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar' if fornecedor else 'Novo' }} Fornecedor{% endblock %}
+{% block page_title %}<i class="bi bi-building me-2"></i>{{ 'Editar' if fornecedor else 'Novo' }} Fornecedor{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-8">
+<div class="form-card">
+  <form method="post">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Nome da Empresa *</label>
+        <input type="text" name="nome" class="form-control" value="{{ fornecedor.nome if fornecedor else '' }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">NUIT</label>
+        <input type="text" name="nuit" class="form-control" value="{{ fornecedor.nuit if fornecedor else '' }}" placeholder="400000000">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Telefone</label>
+        <input type="text" name="telefone" class="form-control" value="{{ fornecedor.telefone if fornecedor else '' }}" placeholder="+258 84 000 0000">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ fornecedor.email if fornecedor else '' }}">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Pessoa de Contacto</label>
+        <input type="text" name="contacto" class="form-control" value="{{ fornecedor.contacto if fornecedor else '' }}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Endereço</label>
+        <textarea name="endereco" class="form-control" rows="2">{{ fornecedor.endereco if fornecedor else '' }}</textarea>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Estado</label>
+        <select name="estado" class="form-select">
+          <option value="Ativo" {{ 'selected' if not fornecedor or fornecedor.estado == 'Ativo' }}>Ativo</option>
+          <option value="Inativo" {{ 'selected' if fornecedor and fornecedor.estado == 'Inativo' }}>Inativo</option>
+        </select>
+      </div>
+    </div>
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn btn-primary-custom px-4"><i class="bi bi-save me-1"></i>Gravar</button>
+      <a href="{{ url_for('fornecedores') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+</div>
+</div>
+{% endblock %}

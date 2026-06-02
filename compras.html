@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Registo de Compras{% endblock %}
+{% block page_title %}<i class="bi bi-bag-check me-2"></i>Registo de Compras{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('nova_compra') }}" class="btn btn-accent"><i class="bi bi-plus-lg me-1"></i>Nova Compra</a>
+</div>
+<div class="table-card">
+  <div class="card-header">Compras Registadas ({{ lista|length }})</div>
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr><th>Número</th><th>Fornecedor</th><th>Data</th><th>Total</th><th>Pagamento</th><th>Estado Pag.</th><th>Ações</th></tr>
+      </thead>
+      <tbody>
+        {% for c in lista %}
+        <tr>
+          <td><strong>{{ c.numero }}</strong></td>
+          <td>{{ c.fornecedor.nome if c.fornecedor else '—' }}</td>
+          <td>{{ c.data_compra.strftime('%d/%m/%Y') }}</td>
+          <td><strong>MT {{ '{:,.2f}'.format(c.total) }}</strong></td>
+          <td>{{ c.metodo_pagamento or '—' }}</td>
+          <td><span class="badge badge-{{ c.estado_pagamento.lower() }} px-2 py-1">{{ c.estado_pagamento }}</span></td>
+          <td>
+            <a href="{{ url_for('ver_compra', id=c.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-4">Nenhuma compra registada.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
